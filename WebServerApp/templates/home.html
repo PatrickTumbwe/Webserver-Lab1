@@ -1,14 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Temperature Readings</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Monitor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .temperature-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .temperature-container i {
+            margin-right: 10px;
+            font-size: 32px;
+            color: #ff5722;
+        }
+
+        #temperature {
+            font-weight: bold;
+            color: #ff5722;
+        }
+    </style>
 </head>
 <body>
-    <h1>Temperature Readings</h1>
-    <ul>
-        {% for reading in readings %}
-            <li>{{ reading.timestamp }}: {{ reading.temperature }}°C</li>
-        {% endfor %}
-    </ul>
+
+<div class="temperature-container">
+    <i class="fas fa-thermometer-half"></i>
+    Temperature: <span id="temperature">--</span> °C
+</div>
+
+<script>
+    var temperatureSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/temperatures/'
+    );
+
+    temperatureSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        document.getElementById('temperature').innerText = data.temperature + ' °C';
+    };
+
+    temperatureSocket.onclose = function(e) {
+        console.error('WebSocket closed unexpectedly');
+    };
+</script>
+
 </body>
 </html>
