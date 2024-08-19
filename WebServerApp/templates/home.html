@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Temperatuer & Humidity</title>
+    <title>Temperature & Humidity</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Chart.js -->
@@ -13,21 +13,23 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #0a1d29;
+            color: #fff;
             margin: 0;
             padding: 20px;
         }
 
         .container {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .card {
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
         .card-body {
@@ -35,15 +37,15 @@
         }
 
         .card-title {
-            color: #333;
+            color: #f0f2f5;
         }
 
         .sensor-box {
-            background-color: #007bff;
+            background-color: #004e92;
             color: #fff;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             text-align: center;
             font-size: 24px;
             margin-bottom: 20px;
@@ -54,19 +56,15 @@
             font-size: 32px;
         }
 
-        #temperatureValue {
-            font-weight: bold;
-        }
-
-        #humidityValue {
+        #temperatureValue, #humidityValue {
             font-weight: bold;
         }
 
         .chart-box {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.2);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
         }
 
@@ -78,7 +76,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Sensor Data</h1>
+        <h1 class="text-center">Temperature & Humidity</h1>
 
         <div class="row">
             <div class="col-md-6">
@@ -218,7 +216,7 @@
         // Function to fetch data from the server
         function fetchData() {
             $.ajax({
-                url: 'temperatures/create/',  // Ensure this URL matches the one in urls.py
+                url: '/api/temperature-readings/',  // Ensure this URL matches the one in urls.py
                 method: 'GET',
                 success: function(response) {
                     console.log("Data received:", response);
@@ -248,8 +246,8 @@
                     humidityChart.update();
 
                     // Update the temperature and humidity values
-                    document.getElementById('temperature').innerText = latestTemperature !== null ? latestTemperature + ' °C' : '-- °C';
-                    document.getElementById('humidity').innerText = latestHumidity !== null ? latestHumidity + ' %' : '-- %';
+                    document.getElementById('temperatureValue').innerText = latestTemperature !== null ? latestTemperature + ' °C' : '-- °C';
+                    document.getElementById('humidityValue').innerText = latestHumidity !== null ? latestHumidity + ' %' : '-- %';
                 },
                 error: function(error) {
                     console.error("Error fetching data:", error);
