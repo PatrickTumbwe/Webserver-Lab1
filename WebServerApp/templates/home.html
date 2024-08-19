@@ -37,7 +37,7 @@
         }
 
         .card-title {
-            color: #f0f2f5;
+            color: #fff; /* White text for card titles */
         }
 
         .sensor-box {
@@ -58,6 +58,7 @@
 
         #temperatureValue, #humidityValue {
             font-weight: bold;
+            color: #fff; /* White text for temperature and humidity values */
         }
 
         .chart-box {
@@ -136,7 +137,7 @@
                 datasets: [{
                     label: 'Temperature (°C)',
                     data: [],
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderColor: '#fff', // White lines for temperature chart
                     borderWidth: 2,
                     fill: false
                 }]
@@ -150,7 +151,10 @@
                             tooltipFormat: 'DD T'
                         },
                         grid: {
-                            color: '#e0e0e0'
+                            color: '#fff' // White grid lines
+                        },
+                        ticks: {
+                            color: '#fff' // White axis labels
                         }
                     },
                     y: {
@@ -158,7 +162,10 @@
                         min: 0, // Minimum value for y-axis
                         max: 40, // Maximum value for y-axis
                         grid: {
-                            color: '#e0e0e0'
+                            color: '#fff' // White grid lines
+                        },
+                        ticks: {
+                            color: '#fff' // White axis labels
                         }
                     }
                 },
@@ -179,7 +186,7 @@
                 datasets: [{
                     label: 'Humidity (%)',
                     data: [],
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderColor: '#fff', // White lines for humidity chart
                     borderWidth: 2,
                     fill: false
                 }]
@@ -193,7 +200,10 @@
                             tooltipFormat: 'DD T'
                         },
                         grid: {
-                            color: '#e0e0e0'
+                            color: '#fff' // White grid lines
+                        },
+                        ticks: {
+                            color: '#fff' // White axis labels
                         }
                     },
                     y: {
@@ -201,7 +211,10 @@
                         min: 0, // Minimum value for y-axis
                         max: 100, // Maximum value for y-axis
                         grid: {
-                            color: '#e0e0e0'
+                            color: '#fff' // White grid lines
+                        },
+                        ticks: {
+                            color: '#fff' // White axis labels
                         }
                     }
                 },
@@ -216,7 +229,7 @@
         // Function to fetch data from the server
         function fetchData() {
             $.ajax({
-                url: '/api/temperature-readings/',  // Ensure this URL matches the one in urls.py
+                url: 'temperatures/',  // Ensure this URL matches the one in urls.py
                 method: 'GET',
                 success: function(response) {
                     console.log("Data received:", response);
