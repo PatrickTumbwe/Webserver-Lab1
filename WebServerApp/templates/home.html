@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sensor Data</title>
+    <title>Temperatuer & Humidity</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Chart.js -->
@@ -10,6 +10,71 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            color: #333;
+        }
+
+        .sensor-box {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .sensor-box i {
+            margin-right: 10px;
+            font-size: 32px;
+        }
+
+        #temperatureValue {
+            font-weight: bold;
+        }
+
+        #humidityValue {
+            font-weight: bold;
+        }
+
+        .chart-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 400px !important;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -85,12 +150,23 @@
                         time: {
                             unit: 'minute',
                             tooltipFormat: 'DD T'
+                        },
+                        grid: {
+                            color: '#e0e0e0'
                         }
                     },
                     y: {
                         beginAtZero: true,
                         min: 0, // Minimum value for y-axis
-                        max: 80 // Maximum value for y-axis
+                        max: 40, // Maximum value for y-axis
+                        grid: {
+                            color: '#e0e0e0'
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        tension: 0.1
                     }
                 }
             }
@@ -117,12 +193,23 @@
                         time: {
                             unit: 'minute',
                             tooltipFormat: 'DD T'
+                        },
+                        grid: {
+                            color: '#e0e0e0'
                         }
                     },
                     y: {
                         beginAtZero: true,
                         min: 0, // Minimum value for y-axis
-                        max: 100 // Maximum value for y-axis
+                        max: 100, // Maximum value for y-axis
+                        grid: {
+                            color: '#e0e0e0'
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        tension: 0.1
                     }
                 }
             }
@@ -131,7 +218,7 @@
         // Function to fetch data from the server
         function fetchData() {
             $.ajax({
-                url: 'temperatures/',  // Ensure this URL matches the one in urls.py
+                url: 'temperatures/create/',  // Ensure this URL matches the one in urls.py
                 method: 'GET',
                 success: function(response) {
                     console.log("Data received:", response);
@@ -143,7 +230,7 @@
                     var latestHumidity = null;
 
                     response.data.forEach(function(entry) {
-                        labels.push(entry.timestamp);
+                        labels.push(new Date(entry.timestamp));
                         temperatureData.push(entry.temperature);
                         humidityData.push(entry.humidity);
                         latestTemperature = entry.temperature;
@@ -161,8 +248,8 @@
                     humidityChart.update();
 
                     // Update the temperature and humidity values
-                    document.getElementById('temperatureValue').innerText = latestTemperature !== null ? latestTemperature + ' °C' : '-- °C';
-                    document.getElementById('humidityValue').innerText = latestHumidity !== null ? latestHumidity + ' %' : '-- %';
+                    document.getElementById('temperature').innerText = latestTemperature !== null ? latestTemperature + ' °C' : '-- °C';
+                    document.getElementById('humidity').innerText = latestHumidity !== null ? latestHumidity + ' %' : '-- %';
                 },
                 error: function(error) {
                     console.error("Error fetching data:", error);
@@ -172,6 +259,9 @@
 
         // Fetch data every 5 seconds
         setInterval(fetchData, 5000);
+
+        // Initial data fetch
+        fetchData();
 
     </script>
 </body>
