@@ -193,7 +193,7 @@
 
     function fetchData() {
         $.ajax({
-            url: '/api/temperature-readings/',
+            url: 'temperature-readings/',
             method: 'GET',
             success: function(data) {
                 updateCharts(data);
