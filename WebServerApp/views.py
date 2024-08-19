@@ -4,6 +4,7 @@ from .models import TemperatureReading
 from .serializer import TemperatureReadingSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 
 class TemperatureReadingList(generics.ListAPIView):
     queryset = TemperatureReading.objects.all()
@@ -24,7 +25,7 @@ class LatestTemperatureAPIView(APIView):
         return Response(serializer.data)
 
 # Function-based view for handling both GET and POST requests
-@APIView(['POST', 'GET'])
+@api_view(['POST', 'GET'])
 def record_data(request):
     if request.method == 'POST':
         serializer = TemperatureReadingSerializer(data=request.data)
