@@ -13,9 +13,15 @@ class TemperatureReadingDetail(generics.RetrieveAPIView):
     queryset = TemperatureReading.objects.all()
     serializer_class = TemperatureReadingSerializer
 
+class TemperatureCreateAPIView(generics.CreateAPIView):
+    queryset = TemperatureReading.objects.all()
+    serializer_class = TemperatureReadingSerializer
+
 class LatestTemperatureAPIView(APIView):
     def get(self, request):
-        latest_temperature = Temperature.objects.latest('id')
-        return Response({"temperature": latest_temperature.data})
-    def temperature_monitor(request):
-        return render(request, 'home.html')
+        latest_temperature = TemperatureReading.objects.latest('id')
+        serializer = TemperatureReadingSerializer(latest_temperature)
+        return Response(serializer.data)
+
+def temperature_monitor(request):
+    return render(request, 'home.html')

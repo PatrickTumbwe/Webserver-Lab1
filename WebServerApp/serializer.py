@@ -4,4 +4,4 @@ from .models import TemperatureReading
 class TemperatureReadingSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemperatureReading
-        fields = ['id', 'timestamp', 'temperature']
+        fields = ['id', 'timestamp', 'temperature', 'humidity']

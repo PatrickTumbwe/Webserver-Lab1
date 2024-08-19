@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Monitor</title>
+    <title>Temperature & Humidity Monitor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,12 +13,20 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
         }
 
-        .temperature-container {
+        .sensor-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .sensor-box {
             background-color: #fff;
             padding: 20px;
             border-radius: 10px;
@@ -26,40 +35,182 @@
             align-items: center;
             font-size: 24px;
             color: #333;
+            flex: 1;
+            margin: 0 10px;
+            text-align: center;
         }
 
-        .temperature-container i {
+        .sensor-box i {
             margin-right: 10px;
             font-size: 32px;
-            color: #ff5722;
         }
 
         #temperature {
             font-weight: bold;
             color: #ff5722;
         }
+
+        #humidity {
+            font-weight: bold;
+            color: #2196f3;
+        }
+
+        #chart-container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .chart-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 48%;
+        }
+        
+        canvas {
+            width: 100% !important;
+            height: 400px !important;
+        }
     </style>
 </head>
 <body>
 
-<div class="temperature-container">
-    <i class="fas fa-thermometer-half"></i>
-    Temperature: <span id="temperature">--</span> °C
+<div class="sensor-container">
+    <div class="sensor-box">
+        <i class="fas fa-thermometer-half" style="color: #ff5722;"></i>
+        Temperature: <span id="temperature">--</span> °C
+    </div>
+    <div class="sensor-box">
+        <i class="fas fa-tint" style="color: #2196f3;"></i>
+        Humidity: <span id="humidity">--</span> %
+    </div>
 </div>
 
+<div id="chart-container">
+    <div class="chart-box">
+        <canvas id="temperatureChart"></canvas>
+    </div>
+    <div class="chart-box">
+        <canvas id="humidityChart"></canvas>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    var temperatureSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/temperatures/'
-    );
+    // Initialize Chart.js charts with empty data
+    var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+    var humidityCtx = document.getElementById('humidityChart').getContext('2d');
 
-    temperatureSocket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        document.getElementById('temperature').innerText = data.temperature + ' °C';
-    };
+    var temperatureChart = new Chart(temperatureCtx, {
+        type: 'line',
+        data: {
+            labels: [], // No initial labels
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: [], // No initial data
+                borderColor: '#ff5722',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'minute'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
+                    }
+                }
+            }
+        }
+    });
 
-    temperatureSocket.onclose = function(e) {
-        console.error('WebSocket closed unexpectedly');
-    };
+    var humidityChart = new Chart(humidityCtx, {
+        type: 'line',
+        data: {
+            labels: [], // No initial labels
+            datasets: [{
+                label: 'Humidity (%)',
+                data: [], // No initial data
+                borderColor: '#2196f3',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'minute'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Humidity (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    function updateCharts(data) {
+        const labels = data.map(item => new Date(item.timestamp));
+        const temperatures = data.map(item => item.temperature);
+        const humidities = data.map(item => item.humidity);
+
+        // Update temperature chart
+        temperatureChart.data.labels = labels;
+        temperatureChart.data.datasets[0].data = temperatures;
+        temperatureChart.update();
+
+        // Update humidity chart
+        humidityChart.data.labels = labels;
+        humidityChart.data.datasets[0].data = humidities;
+        humidityChart.update();
+    }
+
+    function fetchData() {
+        $.ajax({
+            url: '/api/temperature-readings/',
+            method: 'GET',
+            success: function(data) {
+                updateCharts(data);
+                $('#temperature').text(data[data.length - 1].temperature + ' °C');
+                $('#humidity').text(data[data.length - 1].humidity + ' %');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+    }
+
+    // Poll data every 60 seconds
+    setInterval(fetchData, 60000);
+
+    // Initial data fetch
+    fetchData();
 </script>
 
 </body>
