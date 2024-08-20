@@ -142,53 +142,68 @@
         setInterval(updateDateTime, 1000);
 
         // Initialize temperature chart
-        var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
-        var temperatureChart = new Chart(temperatureCtx, {
-            type: 'line',
-            data: {
-                labels: [], // Time labels
-                datasets: [{
-                    label: 'Temperature (°C)',
-                    data: [],
-                    borderColor: '#fff', // White lines for temperature chart
-                    borderWidth: 2,
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute',
-                            tooltipFormat: 'DD T'
-                        },
-                        grid: {
-                            color: '#fff' // White grid lines
-                        },
-                        ticks: {
-                            color: '#fff' // White axis labels
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        min: 0, // Minimum value for y-axis
-                        max: 40, // Maximum value for y-axis
-                        grid: {
-                            color: '#fff' // White grid lines
-                        },
-                        ticks: {
-                            color: '#fff' // White axis labels
-                        }
+       // Initialize temperature chart with blue color and gradient
+    var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+
+    // Create a gradient fill
+var gradientFill = temperatureCtx.createLinearGradient(0, 0, 0, 400);
+gradientFill.addColorStop(0, "rgba(0, 123, 255, 0.5)");  // Semi-transparent blue
+gradientFill.addColorStop(1, "rgba(0, 123, 255, 0)");    // Fully transparent
+
+var temperatureChart = new Chart(temperatureCtx, {
+    type: 'line',
+    data: {
+        labels: [], // Time labels
+        datasets: [{
+            label: 'Temperature (°C)',
+            data: [],
+            borderColor: '#007bff',  // Blue line for temperature chart
+            borderWidth: 2,
+            fill: true,
+            backgroundColor: gradientFill  // Apply the gradient fill
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'minute',
+                    tooltipFormat: 'HH:mm',  // Display hours and minutes
+                    displayFormats: {
+                        minute: 'HH:mm'
                     }
                 },
-                elements: {
-                    line: {
-                        tension: 0.1
-                    }
+                grid: {
+                    color: '#fff' // White grid lines
+                },
+                ticks: {
+                    color: '#fff', // White axis labels
+                    maxRotation: 0,  // Prevent labels from rotating
+                    autoSkip: true,  // Automatically skip labels to prevent cramping
+                    maxTicksLimit: 10  // Limit the number of labels shown
+                }
+            },
+            y: {
+                beginAtZero: true,
+                min: 0,  // Minimum value for y-axis
+                max: 40,  // Maximum value for y-axis
+                grid: {
+                    color: '#fff' // White grid lines
+                },
+                ticks: {
+                    color: '#fff' // White axis labels
                 }
             }
-        });
+        },
+        elements: {
+            line: {
+                tension: 0.1  // Set line tension (curve)
+            }
+        }
+    }
+});
+
 
         // Initialize humidity chart
         var humidityCtx = document.getElementById('humidityChart').getContext('2d');
