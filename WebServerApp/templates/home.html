@@ -205,54 +205,67 @@ var temperatureChart = new Chart(temperatureCtx, {
 });
 
 
-        // Initialize humidity chart
-        var humidityCtx = document.getElementById('humidityChart').getContext('2d');
-        var humidityChart = new Chart(humidityCtx, {
-            type: 'line',
-            data: {
-                labels: [], // Time labels
-                datasets: [{
-                    label: 'Humidity (%)',
-                    data: [],
-                    borderColor: '#fff', // White lines for humidity chart
-                    borderWidth: 2,
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute',
-                            tooltipFormat: 'DD T'
-                        },
-                        grid: {
-                            color: '#fff' // White grid lines
-                        },
-                        ticks: {
-                            color: '#fff' // White axis labels
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        min: 0, // Minimum value for y-axis
-                        max: 100, // Maximum value for y-axis
-                        grid: {
-                            color: '#fff' // White grid lines
-                        },
-                        ticks: {
-                            color: '#fff' // White axis labels
-                        }
+ // Initialize humidity chart with red color and gradient
+var humidityCtx = document.getElementById('humidityChart').getContext('2d');
+
+// Create a gradient fill for humidity chart
+var humidityGradient = humidityCtx.createLinearGradient(0, 0, 0, 400);
+humidityGradient.addColorStop(0, "rgba(220, 53, 69, 0.5)");  // Semi-transparent red
+humidityGradient.addColorStop(1, "rgba(220, 53, 69, 0)");    // Fully transparent
+
+var humidityChart = new Chart(humidityCtx, {
+    type: 'line',
+    data: {
+        labels: [], // Time labels
+        datasets: [{
+            label: 'Humidity (%)',
+            data: [],
+            borderColor: '#dc3545',  // Red line for humidity chart
+            borderWidth: 2,
+            fill: true,
+            backgroundColor: humidityGradient  // Apply the gradient fill
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'hour',  // Keep the original time format
+                    tooltipFormat: 'h:mm a',  // 12-hour format with AM/PM
+                    displayFormats: {
+                        hour: 'h:mm a'  // Display hours and minutes
                     }
                 },
-                elements: {
-                    line: {
-                        tension: 0.1
-                    }
+                grid: {
+                    color: '#fff' // White grid lines
+                },
+                ticks: {
+                    color: '#fff', // White axis labels
+                    maxRotation: 0,  // Prevent labels from rotating
+                    autoSkip: true,  // Automatically skip labels to prevent cramping
+                    maxTicksLimit: 10  // Limit the number of labels shown
+                }
+            },
+            y: {
+                beginAtZero: true,
+                min: 0,  // Minimum value for y-axis
+                max: 100,  // Maximum value for y-axis
+                grid: {
+                    color: '#fff' // White grid lines
+                },
+                ticks: {
+                    color: '#fff' // White axis labels
                 }
             }
-        });
+        },
+        elements: {
+            line: {
+                tension: 0.1  // Set line tension (curve)
+            }
+        }
+    }
+});
 
         // Function to fetch data from the server
         function fetchData() {
