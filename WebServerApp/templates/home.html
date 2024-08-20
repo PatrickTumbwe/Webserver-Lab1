@@ -142,13 +142,13 @@
         setInterval(updateDateTime, 1000);
 
         // Initialize temperature chart
-       // Initialize temperature chart with blue color and gradient
-    var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+// Initialize temperature chart with blue color and gradient
+var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
 
-    // Create a gradient fill
-var gradientFill = temperatureCtx.createLinearGradient(0, 0, 0, 400);
-gradientFill.addColorStop(0, "rgba(0, 123, 255, 0.5)");  // Semi-transparent blue
-gradientFill.addColorStop(1, "rgba(0, 123, 255, 0)");    // Fully transparent
+// Create a gradient fill for temperature chart
+var temperatureGradient = temperatureCtx.createLinearGradient(0, 0, 0, 400);
+temperatureGradient.addColorStop(0, "rgba(0, 123, 255, 0.5)");  // Semi-transparent blue
+temperatureGradient.addColorStop(1, "rgba(0, 123, 255, 0)");    // Fully transparent
 
 var temperatureChart = new Chart(temperatureCtx, {
     type: 'line',
@@ -160,7 +160,7 @@ var temperatureChart = new Chart(temperatureCtx, {
             borderColor: '#007bff',  // Blue line for temperature chart
             borderWidth: 2,
             fill: true,
-            backgroundColor: gradientFill  // Apply the gradient fill
+            backgroundColor: temperatureGradient  // Apply the gradient fill
         }]
     },
     options: {
@@ -168,10 +168,10 @@ var temperatureChart = new Chart(temperatureCtx, {
             x: {
                 type: 'time',
                 time: {
-                    unit: 'minute',
-                    tooltipFormat: 'HH:mm',  // Display hours and minutes
+                    unit: 'hour',  // Keep the original time format
+                    tooltipFormat: 'h:mm a',  // 12-hour format with AM/PM
                     displayFormats: {
-                        minute: 'HH:mm'
+                        hour: 'h:mm a'  // Display hours and minutes
                     }
                 },
                 grid: {
