@@ -226,44 +226,58 @@
             }
         });
 
-        // Function to fetch the latest data from the server
-function fetchLatestData() {
-    $.ajax({
-        url: 'temperatures/',  // Adjust this URL to match your endpoint for the latest data
-        method: 'GET',
-        success: function(response) {
-            console.log("Latest data received:", response);
+        // Function to fetch data from the server
+        function fetchData() {
+            $.ajax({
+                url: 'temperatures/',  // Ensure this URL matches the one in urls.py
+                method: 'GET',
+                success: function(response) {
+                    console.log("Data received:", response);
 
-            var latestTemperature = response.temperature;
-            var latestHumidity = response.humidity;
-            var timestamp = new Date(response.timestamp);
+                    // Ensure the response is defined and has data
+                    if (response && response.data && Array.isArray(response.data)) {
+                        var labels = [];
+                        var temperatureData = [];
+                        var humidityData = [];
+                        var latestTemperature = null;
+                        var latestHumidity = null;
 
-            // Update the temperature chart with the latest data point
-            temperatureChart.data.labels.push(timestamp);
-            temperatureChart.data.datasets[0].data.push(latestTemperature);
-            temperatureChart.update();
+                        response.data.forEach(function(entry) {
+                            labels.push(new Date(entry.timestamp));
+                            temperatureData.push(entry.temperature);
+                            humidityData.push(entry.humidity);
+                            latestTemperature = entry.temperature;
+                            latestHumidity = entry.humidity;
+                        });
 
-            // Update the humidity chart with the latest data point
-            humidityChart.data.labels.push(timestamp);
-            humidityChart.data.datasets[0].data.push(latestHumidity);
-            humidityChart.update();
+                        // Update the temperature chart
+                        temperatureChart.data.labels = labels;
+                        temperatureChart.data.datasets[0].data = temperatureData;
+                        temperatureChart.update();
 
-            // Update the temperature and humidity values
-            document.getElementById('temperatureValue').innerText = latestTemperature !== null ? latestTemperature + ' °C' : '-- °C';
-            document.getElementById('humidityValue').innerText = latestHumidity !== null ? latestHumidity + ' %' : '-- %';
-        },
-        error: function(error) {
-            console.error("Error fetching the latest data:", error);
+                        // Update the humidity chart
+                        humidityChart.data.labels = labels;
+                        humidityChart.data.datasets[0].data = humidityData;
+                        humidityChart.update();
+
+                        // Update the temperature and humidity values
+                        document.getElementById('temperatureValue').innerText = latestTemperature !== null ? latestTemperature + ' °C' : '-- °C';
+                        document.getElementById('humidityValue').innerText = latestHumidity !== null ? latestHumidity + ' %' : '-- %';
+                    } else {
+                        console.error("Invalid data format received:", response);
+                    }
+                },
+                error: function(error) {
+                    console.error("Error fetching data:", error);
+                }
+            });
         }
-    });
-}
 
-// Fetch the latest data every 5 seconds
-setInterval(fetchLatestData, 5000);
+        // Fetch data every 5 seconds
+        setInterval(fetchData, 5000);
 
-// Initial data fetch
-fetchLatestData();
-
+        // Initial data fetch
+        fetchData();
 
     </script>
 </body>
