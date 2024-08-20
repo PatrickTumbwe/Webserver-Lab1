@@ -262,7 +262,7 @@
                             latestTemperature = entry.temperature;
                             latestHumidity = entry.humidity;
                         });
-                        condolr.log("Tr"+temperatureData);
+                        console.log("Tr"+temperatureData);
                         // Update the temperature chart
                         temperatureChart.data.labels = labels;
                         temperatureChart.data.datasets[0].data = temperatureData;
