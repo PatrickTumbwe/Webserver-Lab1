@@ -255,7 +255,7 @@
                         var latestTemperature = null;
                         var latestHumidity = null;
 
-                        response.data.forEach(function(entry) {
+                        response.forEach(function(entry) {
                             labels.push(new Date(entry.timestamp));
                             temperatureData.push(entry.temperature);
                             humidityData.push(entry.humidity);
