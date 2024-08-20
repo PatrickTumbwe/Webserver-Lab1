@@ -164,45 +164,39 @@ var temperatureChart = new Chart(temperatureCtx, {
         }]
     },
     options: {
-        scales: {
-            x: {
-                type: 'time',
-                time: {
-                    unit: 'hour',  // Keep the original time format
-                    tooltipFormat: 'h:mm a',  // 12-hour format with AM/PM
-                    displayFormats: {
-                        hour: 'h:mm a'  // Display hours and minutes
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute',
+                            tooltipFormat: 'DD T'
+                        },
+                        grid: {
+                            color: '#fff' // White grid lines
+                        },
+                        ticks: {
+                            color: '#fff' // White axis labels
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        min: 0, // Minimum value for y-axis
+                        max: 40, // Maximum value for y-axis
+                        grid: {
+                            color: '#fff' // White grid lines
+                        },
+                        ticks: {
+                            color: '#fff' // White axis labels
+                        }
                     }
                 },
-                grid: {
-                    color: '#fff' // White grid lines
-                },
-                ticks: {
-                    color: '#fff', // White axis labels
-                    maxRotation: 0,  // Prevent labels from rotating
-                    autoSkip: true,  // Automatically skip labels to prevent cramping
-                    maxTicksLimit: 10  // Limit the number of labels shown
-                }
-            },
-            y: {
-                beginAtZero: true,
-                min: 0,  // Minimum value for y-axis
-                max: 40,  // Maximum value for y-axis
-                grid: {
-                    color: '#fff' // White grid lines
-                },
-                ticks: {
-                    color: '#fff' // White axis labels
+                elements: {
+                    line: {
+                        tension: 0.1
+                    }
                 }
             }
-        },
-        elements: {
-            line: {
-                tension: 0.1  // Set line tension (curve)
-            }
-        }
-    }
-});
+        });
 
 
  // Initialize humidity chart with red color and gradient
