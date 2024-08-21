@@ -131,7 +131,7 @@
         // Function to fetch data from the server
         function fetchData() {
             $.ajax({
-                url: '/temperatures/',  // Ensure this URL matches the one in urls.py
+                url: '/latest-temperature/',  // Ensure this URL matches the one in urls.py
                 method: 'GET',
                 success: function(response) {
                     console.log("Data received:", response);
