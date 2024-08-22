@@ -139,16 +139,13 @@
                     var labels = [];
                     var temperatureData = [];
                     var humidityData = [];
-                    var latestTemperature = null;
-                    var latestHumidity = null;
+                    var latestTemperature = response.temperature;
+                    var latestHumidity = response.humidity;
 
-                    response.data.forEach(function(entry) {
-                        labels.push(entry.timestamp);
-                        temperatureData.push(entry.temperature);
-                        humidityData.push(entry.humidity);
-                        latestTemperature = entry.temperature;
-                        latestHumidity = entry.humidity;
-                    });
+                    // Push the timestamp, temperature, and humidity to the respective arrays
+                    labels.push(response.timestamp);
+                    temperatureData.push(latestTemperature);
+                    humidityData.push(latestHumidity);
 
                     // Update the temperature chart
                     temperatureChart.data.labels = labels;
