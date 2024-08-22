@@ -64,6 +64,65 @@
         }
         setInterval(updateDateTime, 1000);
     
+        // Common chart options
+        var commonOptions = {
+            animation: {
+                duration: 1500, // Animation duration
+                easing: 'easeInOutBounce' // Animation easing
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'minute',
+                        tooltipFormat: 'DD T'
+                    }
+                },
+                y: {
+                    beginAtZero: false,
+                    min: 10, // Minimum value for y-axis
+                    max: 40, // Maximum value for y-axis
+                    ticks: {
+                        stepSize: 0.5 // Interval of 0.5
+                    }
+                }
+            },
+            elements: {
+                line: {
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    tension: 0.4, // Rounded edges
+                    fill: true, // Fill under the line
+                    backgroundColor: 'rgba(255, 99, 132, 0.1)' // Light background color
+                },
+                point: {
+                    radius: 3,
+                    backgroundColor: 'rgba(255, 99, 132, 1)',
+                    hoverRadius: 5
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: '#333',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                    top: 10,
+                    bottom: 10
+                }
+            }
+        };
+    
         // Initialize temperature chart
         var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
         var temperatureChart = new Chart(temperatureCtx, {
@@ -72,32 +131,10 @@
                 labels: [], // Time labels
                 datasets: [{
                     label: 'Temperature (°C)',
-                    data: [],
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 2,
-                    fill: false
+                    data: []
                 }]
             },
-            options: {
-                animation: {
-                    duration: 1500, // Animation duration
-                    easing: 'easeInOutBounce' // Animation easing
-                },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute',
-                            tooltipFormat: 'DD T'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        min: 10, // Minimum value for y-axis
-                        max: 50 // Maximum value for y-axis
-                    }
-                }
-            }
+            options: commonOptions
         });
     
         // Initialize humidity chart
@@ -108,32 +145,10 @@
                 labels: [], // Time labels
                 datasets: [{
                     label: 'Humidity (%)',
-                    data: [],
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 2,
-                    fill: false
+                    data: []
                 }]
             },
-            options: {
-                animation: {
-                    duration: 1500, // Animation duration
-                    easing: 'easeInOutBounce' // Animation easing
-                },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute',
-                            tooltipFormat: 'DD T'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        min: 10, // Minimum value for y-axis
-                        max: 50 // Maximum value for y-axis
-                    }
-                }
-            }
+            options: commonOptions
         });
     
         // Function to fetch data from the server
@@ -184,6 +199,7 @@
         setInterval(fetchData, 5000);
     
     </script>
+    
     
 </body>
 </html>
