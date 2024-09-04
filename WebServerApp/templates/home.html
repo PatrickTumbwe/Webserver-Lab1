@@ -10,6 +10,22 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border: none;
+        }
+        .card-title {
+            color: #ffffff;
+        }
+        #datetime {
+            color: #d4d4d4;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -63,12 +79,14 @@
             document.getElementById('datetime').innerText = datetimeStr;
         }
         setInterval(updateDateTime, 1000);
-    
+
         // Common chart options
         var commonOptions = {
             animation: {
                 duration: 1500, // Animation duration
-                easing: 'easeInOutBounce' // Animation easing
+                easing: 'easeOutBounce', // Animation easing
+                from: 0, // Start animation from the bottom of the chart
+                to: 1 // Animate to the actual data value
             },
             scales: {
                 x: {
@@ -76,28 +94,29 @@
                     time: {
                         unit: 'minute',
                         tooltipFormat: 'DD T'
+                    },
+                    ticks: {
+                        color: '#d4d4d4'
                     }
                 },
                 y: {
-                    beginAtZero: false,
-                    min: 10, // Minimum value for y-axis
-                    max: 40, // Maximum value for y-axis
+                    beginAtZero: true,
                     ticks: {
-                        stepSize: 0.5 // Interval of 0.5
+                        color: '#d4d4d4'
                     }
                 }
             },
             elements: {
                 line: {
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2,
                     tension: 0.4, // Rounded edges
                     fill: true, // Fill under the line
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)' // Light background color
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)' // Light background color
                 },
                 point: {
                     radius: 3,
-                    backgroundColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 1)',
                     hoverRadius: 5
                 }
             },
@@ -105,7 +124,7 @@
                 legend: {
                     display: true,
                     labels: {
-                        color: '#333',
+                        color: '#ffffff',
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -122,7 +141,7 @@
                 }
             }
         };
-    
+
         // Initialize temperature chart
         var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
         var temperatureChart = new Chart(temperatureCtx, {
@@ -136,7 +155,7 @@
             },
             options: commonOptions
         });
-    
+
         // Initialize humidity chart
         var humidityCtx = document.getElementById('humidityChart').getContext('2d');
         var humidityChart = new Chart(humidityCtx, {
@@ -150,7 +169,7 @@
             },
             options: commonOptions
         });
-    
+
         // Function to fetch data from the server
         function fetchData() {
             $.ajax({
@@ -158,34 +177,34 @@
                 method: 'GET',
                 success: function(response) {
                     console.log("Data received:", response);
-    
+
                     var labels = [];
                     var temperatureData = [];
                     var humidityData = [];
-    
+
                     // Get the latest 20 or 30 data points
                     var latestData = response.slice(-30); // Adjust this number to show last 20 or 30 data points
-    
+
                     latestData.forEach(function(dataPoint) {
                         labels.push(dataPoint.timestamp);
                         temperatureData.push(dataPoint.temperature);
                         humidityData.push(dataPoint.humidity);
                     });
-    
+
                     // Update the temperature chart
                     temperatureChart.data.labels = labels;
                     temperatureChart.data.datasets[0].data = temperatureData;
                     temperatureChart.update();
-    
+
                     // Update the humidity chart
                     humidityChart.data.labels = labels;
                     humidityChart.data.datasets[0].data = humidityData;
                     humidityChart.update();
-    
+
                     // Update the temperature and humidity values with the latest data point
                     var latestTemperature = latestData[latestData.length - 1].temperature;
                     var latestHumidity = latestData[latestData.length - 1].humidity;
-    
+
                     document.getElementById('temperatureValue').innerText = latestTemperature !== null ? latestTemperature + ' °C' : '-- °C';
                     document.getElementById('humidityValue').innerText = latestHumidity !== null ? latestHumidity + ' %' : '-- %';
                 },
@@ -194,12 +213,10 @@
                 }
             });
         }
-    
+
         // Fetch data every 5 seconds
         setInterval(fetchData, 2000);
-    
+
     </script>
-    
-    
 </body>
 </html>
