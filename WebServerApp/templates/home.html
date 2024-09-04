@@ -1,47 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sensor Data</title>
-    <!-- Bootstrap CSS -->
+    <title>Weather Forecast Station</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Date Adapter -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- External CSS -->
     <style>
         body {
-            background-color: #121212;
-            color: #ffffff;
+            background-color: lightblue;
+            font-family: Arial, sans-serif;
         }
+
         .card {
-            background-color: #1e1e1e;
-            border: none;
+            background-color: #f5f5f5;
+            border-color: #ddd;
         }
+
         .card-title {
-            color: #ffffff;
+            color: #333;
         }
-        #datetime {
-            color: #d4d4d4;
+
+        .lead {
+            color: #333;
         }
-        canvas {
-            background-color: #1e1e1e;
+
+        .chart-container {
+            height: 300px;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @keyframes colorChange {
+            0% {
+                color: red;
+            }
+
+            50% {
+                color: white;
+            }
+
+            100% {
+                color: red;
+            }
+        }
+
+        h1 {
+            animation: colorChange 2s infinite;
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Sensor Data</h1>
+        <h1 class="text-center">WEATHER FORECAST STATION</h1>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Temperature</h5>
-                        <canvas id="temperatureChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="temperatureChart"></canvas>
+                        </div>
                         <div class="mt-3 text-center">
                             <i class="fas fa-thermometer-half fa-2x"></i>
                             <p id="temperatureValue" class="lead">-- °C</p>
@@ -53,7 +77,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Humidity</h5>
-                        <canvas id="humidityChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="humidityChart"></canvas>
+                        </div>
                         <div class="mt-3 text-center">
                             <i class="fas fa-tint fa-2x"></i>
                             <p id="humidityValue" class="lead">-- %</p>
@@ -62,6 +88,7 @@
                 </div>
             </div>
         </div>
+
         <div class="card mt-4">
             <div class="card-body text-center">
                 <h5 class="card-title">Current Date & Time</h5>
@@ -70,12 +97,12 @@
         </div>
     </div>
 
-    <!-- jQuery and dependencies (Bootstrap JS) -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        // Function to update date and time
         function updateDateTime() {
             var now = new Date();
             var datetimeStr = now.toLocaleString();
@@ -83,135 +110,125 @@
         }
         setInterval(updateDateTime, 1000);
 
-        var commonOptions = {
-            animation: {
-                duration: 1500,
-                easing: 'easeOutBounce'
-            },
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'minute',
-                        tooltipFormat: 'DD T'
-                    },
-                    ticks: {
-                        color: '#ffffff'
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        color: '#ffffff'
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
-                }
-            },
-            elements: {
-                line: {
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)'
-                },
-                point: {
-                    radius: 4,
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    hoverRadius: 6
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        color: '#ffffff',
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        }
-                    }
-                }
-            },
-            layout: {
-                padding: {
-                    left: 10,
-                    right: 10,
-                    top: 10,
-                    bottom: 10
-                }
-            }
-        };
-
+        // Initialize temperature chart
         var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
         var temperatureChart = new Chart(temperatureCtx, {
             type: 'line',
             data: {
-                labels: [],
+                labels: [], // Time labels
                 datasets: [{
                     label: 'Temperature (°C)',
-                    data: []
+                    data: [],
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    fill: false
                 }]
             },
-            options: commonOptions
+            options: {
+                animation: {
+                    duration: 1500,
+                    easing: 'easeInOutBounce'
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute',
+                            tooltipFormat: 'DD T'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        min: 10,
+                        max: 50
+                    }
+                }
+            }
         });
 
+        // Initialize humidity chart
         var humidityCtx = document.getElementById('humidityChart').getContext('2d');
         var humidityChart = new Chart(humidityCtx, {
             type: 'line',
             data: {
-                labels: [],
+                labels: [], // Time labels
                 datasets: [{
                     label: 'Humidity (%)',
-                    data: []
+                    data: [],
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: false
                 }]
             },
-            options: commonOptions
+            options: {
+                animation: {
+                    duration: 1500,
+                    easing: 'easeInOutBounce'
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute',
+                            tooltipFormat: 'DD T'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        min: 10,
+                        max: 50
+                    }
+                }
+            }
         });
 
+        // Function to fetch data from the server
         function fetchData() {
             $.ajax({
-                url: '/temperatures/',
+                url: '/temperatures/',  // Ensure this URL matches the one in urls.py
                 method: 'GET',
-                success: function(response) {
+                success: function (response) {
+                    console.log("Data received:", response);
+
                     var labels = [];
                     var temperatureData = [];
                     var humidityData = [];
 
-                    var latestData = response.slice(-30);
+                    // Get the latest 20 or 30 data points
+                    var latestData = response.slice(-30); // Adjust this number to show last 20 or 30 data points
 
-                    latestData.forEach(function(dataPoint) {
+                    latestData.forEach(function (dataPoint) {
                         labels.push(dataPoint.timestamp);
                         temperatureData.push(dataPoint.temperature);
                         humidityData.push(dataPoint.humidity);
                     });
 
+                    // Update the temperature chart
                     temperatureChart.data.labels = labels;
                     temperatureChart.data.datasets[0].data = temperatureData;
                     temperatureChart.update();
 
+                    // Update the humidity chart
                     humidityChart.data.labels = labels;
                     humidityChart.data.datasets[0].data = humidityData;
                     humidityChart.update();
 
-                    var latestTemperature = latestData[latestData.length - 1].temperature;
+                    // Update the temperature and humidity values with the latest data point
+                    var latestTemperature = latestData[latestData.lAength - 1].temperature;
                     var latestHumidity = latestData[latestData.length - 1].humidity;
 
                     document.getElementById('temperatureValue').innerText = latestTemperature !== null ? latestTemperature + ' °C' : '-- °C';
                     document.getElementById('humidityValue').innerText = latestHumidity !== null ? latestHumidity + ' %' : '-- %';
                 },
-                error: function(error) {
+                error: function (error) {
                     console.error("Error fetching data:", error);
                 }
             });
         }
 
-        setInterval(fetchData, 2000);
+        // Fetch data every 5 seconds
+        setInterval(fetchData, 5000);
     </script>
 </body>
+
 </html>
